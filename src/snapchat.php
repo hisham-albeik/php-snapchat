@@ -186,37 +186,89 @@ class Snapchat extends SnapchatAgent {
 			)
 		);
 
-		if (!isset($result->token)) {
+		if (!isset($result->auth_token)) {
 			return FALSE;
 		}
-
-		$timestamp = parent::timestamp();
-		$result = parent::post(
-			'/registeru',
-			array(
-				'email' => $email,
-				'username' => $username,
-				'timestamp' => $timestamp,
-			),
-			array(
-				parent::STATIC_TOKEN,
-				$timestamp,
-			)
-		);
 
 		// If registration is successful, set the username and auth_token.
 		if (isset($result->logged) && $result->logged) {
 			$this->auth_token = $result->auth_token;
-			$this->username = $result->username;
+			$this->$username = $result->email;
 
 			$this->cache = new SnapchatCache();
 			$this->cache->set('updates', $result);
 
-			return $result;
+			return TRUE;
 		}
+
 		else {
 			return FALSE;
 		}
+	}
+
+	/**
+	 * Gets the Captcha Solution to snapchat's server.	 
+	 *
+	 * @param string $username
+	 *	The username to get the Captcha puzzle.
+	 *
+	 *
+	 * @return string
+	 * 	a string which is actually a .zip file full of ghost images.
+	 *
+	 */
+	public function getCaptcha($username) {
+
+				$timestamp = parent::timestamp();
+				$result = parent::post(
+				'/get_captcha',
+				array(
+					'timestamp' => $timestamp,
+					'username' => $username,
+				),
+				array(
+					$this->auth_token,
+					$timestamp,
+				)
+			);
+
+	}
+
+
+	/**
+	 * Sends the Captcha Solution to snapchat's server.	 
+	 *
+	 * @param $username
+	 *	The username to send the solution.
+	 *
+	 * @param $captcha_solution
+	 *	The binary solution of the captcha. must be 9 chars long.
+	 *
+	 *
+	 * @return mixed
+	 *   The data returned by the service
+	 *
+	 */
+	public function sendCaptcha($username, $captcha_solution) {
+
+			$timestamp = parent::timestamp();
+
+				$captcha_id = $username . str_replace("-", "~", $timestamp);
+
+				$result = parent::post(
+				'/solve_captcha',
+				array(
+					'captcha_id' => $captcha_id,
+					'captcha_solution' => $captcha_solution,
+					'timestamp' => $timestamp,
+					'username' => $username,
+				),
+				array(
+					$this->auth_token,
+					$timestamp,
+				)
+			);
+
 	}
 
 	/**

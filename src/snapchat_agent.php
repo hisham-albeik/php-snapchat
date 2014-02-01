@@ -11,7 +11,7 @@ abstract class SnapchatAgent {
 	 * App version (as of 2013-11-20). Before updating this value, confirm
 	 * that the library requests everything in the same way as the app.
 	 */
-	const VERSION = '6.0.2';
+	const VERSION = '4.1.07';
 
 	/*
 	 * The API URL. We're using the /bq endpoint, the one that the iPhone
@@ -53,7 +53,7 @@ abstract class SnapchatAgent {
 		CURLOPT_CONNECTTIMEOUT => 5,
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_TIMEOUT => 10,
-		CURLOPT_USERAGENT => 'Snapchat/6.0.2 (iPhone; iOS 7.0.4; gzip)',
+		CURLOPT_USERAGENT => 'Snapchat/4.1.07 (Nexus 4; Android 18; gzip)',
 	);
 
 	/**
@@ -232,6 +232,7 @@ abstract class SnapchatAgent {
 		$ch = curl_init();
 
 		$data['req_token'] = self::hash($params[0], $params[1]);
+
 		$data['version'] = self::VERSION;
 
 		if (!$multipart) {
@@ -243,6 +244,7 @@ abstract class SnapchatAgent {
 			CURLOPT_POSTFIELDS => $data,
 			CURLOPT_URL => self::URL . $endpoint,
 		);
+
 		curl_setopt_array($ch, $options);
 
 		$result = curl_exec($ch);
@@ -259,6 +261,14 @@ abstract class SnapchatAgent {
 		if ($result === FALSE || curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
 			curl_close($ch);
 			return FALSE;
+		}
+
+		// upon registration, the captcha sends us a header to download.
+		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; charset=UTF-8")
+		{
+
+			file_put_contents("snaptcha" . $params[1] .  ".zip", $result);
+
 		}
 
 		curl_close($ch);
