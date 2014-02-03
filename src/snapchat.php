@@ -207,14 +207,14 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
-	 * Gets the Captcha Solution to snapchat's server.	 
+	 * Gets the Captcha associated to the username from snapchat's server
 	 *
 	 * @param string $username
-	 *	The username to get the Captcha puzzle.
+	 *	The username to get the Captcha puzzle, or in this case an email.
 	 *
 	 *
 	 * @return string
-	 * 	a string which is actually a .zip file full of ghost images.
+	 * 	a string which is actually a .zip file full of the ghost images.
 	 *
 	 */
 	public function getCaptcha($username) {
@@ -253,7 +253,7 @@ class Snapchat extends SnapchatAgent {
 
 			$timestamp = parent::timestamp();
 
-				$captcha_id = $username . str_replace("-", "~", $timestamp);
+				$captcha_id = $username . "~" . $timestamp;
 
 				$result = parent::post(
 				'/solve_captcha',
