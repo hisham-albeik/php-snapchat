@@ -5,6 +5,7 @@
  *   Provides the Snapchat class with a lower-level API layer to handle
  *   requests and decrypt responses.
  */
+
 abstract class SnapchatAgent {
 
 	/*
@@ -229,6 +230,9 @@ abstract class SnapchatAgent {
 	 *   the request failed.
 	 */
 	public function post($endpoint, $data, $params, $multipart = FALSE) {
+		
+		// this is going to get hacky.
+
 		$ch = curl_init();
 
 		$data['req_token'] = self::hash($params[0], $params[1]);
@@ -245,9 +249,38 @@ abstract class SnapchatAgent {
 			CURLOPT_URL => self::URL . $endpoint,
 		);
 
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+		if($endpoint == "/get_captcha")
+		{
+		curl_setopt($ch, CURLOPT_VERBOSE, true);
+		curl_setopt($ch, CURLOPT_STDERR, fopen(dirname(__DIR__) . "/headers.txt", "r+"));
+		}
 		curl_setopt_array($ch, $options);
 
 		$result = curl_exec($ch);
+
+		// upon registration, the captcha sends us a header to download.
+		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; charset=UTF-8")
+		{
+			
+			$filename = fopen(dirname(__DIR__) . "/headers.txt", "r+");
+
+			$stream = stream_get_contents($filename, 1100,1142);
+
+			$file = preg_split("/[\s,]+/", $stream);
+			
+			$captcha_id = str_replace(".zip", "", $file[0]);
+
+			var_dump($captcha_id);
+
+			file_put_contents($captcha_id .  ".zip", $result);
+
+			curl_close($ch);
+
+			return $result = $captcha_id;
+		}
+
 
 		// If cURL doesn't have a bundle of root certificates handy, we provide
 		// ours (see http://curl.haxx.se/docs/sslcerts.html).
@@ -263,13 +296,6 @@ abstract class SnapchatAgent {
 			return FALSE;
 		}
 
-		// upon registration, the captcha sends us a header to download.
-		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; charset=UTF-8")
-		{
-
-			file_put_contents("snaptcha" . $params[1] .  ".zip", $result);
-
-		}
 
 		curl_close($ch);
 

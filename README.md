@@ -106,6 +106,39 @@ $snapchat->logout();
 ?>
 ```
 
+This includes the unfinished "Snaptcha" implementation including two new methods,
+
+getCaptcha()
+
+and
+
+solveCaptcha()
+
+Example:
+
+```
+
+<?php
+
+$email = "boomo@gmail.com";
+
+$s = new Snapchat();
+
+$s->register("mydesiredusername","mypassword", $email, "1982-02-04");
+
+$captcha_id = $s->getCaptcha($email);
+
+echo "captcha?";
+
+$solution = fgets(STDIN); // Solution is in binary.
+
+$s->sendCaptcha($username, $captcha_id, $solution);
+
+?>
+
+
+```
+
 
 Documentation
 ------------
