@@ -106,6 +106,8 @@ $snapchat->logout();
 ?>
 ```
 
+##Snaptcha
+
 This includes the unfinished "Snaptcha" implementation including two new methods,
 
 getCaptcha()
