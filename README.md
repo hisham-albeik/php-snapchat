@@ -114,7 +114,7 @@ getCaptcha()
 
 and
 
-solveCaptcha()
+sendCaptcha()
 
 Example:
 
