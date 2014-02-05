@@ -116,8 +116,7 @@ solveCaptcha()
 
 Example:
 
-```
-
+```php
 <?php
 
 $email = "boomo@gmail.com";
@@ -135,8 +134,6 @@ $solution = fgets(STDIN); // Solution is in binary.
 $s->sendCaptcha($username, $captcha_id, $solution);
 
 ?>
-
-
 ```
 
 
