@@ -121,11 +121,13 @@ Example:
 ```php
 <?php
 
-$email = "boomo@gmail.com";
+include 'src/snapchat.php';
+
+$email = "email@gmail.com";
 
 $s = new Snapchat();
 
-$s->register("mydesiredusername","mypassword", $email, "1982-02-04");
+$s->register("username","password", $email, "1972-04-13");
 
 $captcha_id = $s->getCaptcha($email);
 
