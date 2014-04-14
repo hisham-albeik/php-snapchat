@@ -212,12 +212,14 @@ class Snapchat extends SnapchatAgent {
 	 * @param string $username
 	 *	The username to get the Captcha puzzle, or in this case an email.
 	 *
+	 * @param bool $download
+	 *	Download the captcha files from snapchat. (optional)
 	 *
 	 * @return string
 	 * 	A string which is the captcha_id.
 	 *
 	 */
-	public function getCaptcha($username) {
+	public function getCaptcha($username, $download = NULL) {
 
 				$timestamp = parent::timestamp();
 				$result = parent::post(
@@ -225,6 +227,7 @@ class Snapchat extends SnapchatAgent {
 				array(
 					'timestamp' => $timestamp,
 					'username' => $username,
+					'dl' => $download
 				),
 				array(
 					$this->auth_token,
@@ -267,7 +270,6 @@ class Snapchat extends SnapchatAgent {
 					
 				)
 			);
-
 	}
 
 	/**

@@ -236,6 +236,8 @@ abstract class SnapchatAgent {
 		$data['req_token'] = self::hash($params[0], $params[1]);
 
 		$data['version'] = self::VERSION;
+		
+		$download = $data['dl'];
 
 		if (!$multipart) {
 			$data = http_build_query($data);
@@ -268,10 +270,15 @@ abstract class SnapchatAgent {
 			
 			$captcha_id = $match[2] . ".zip";
 			
+			if($download == 1)	{
+				
+				file_put_contents($captcha_id, $result);
+			}
+			
 			unlink("headers.txt");
 			
 			curl_close($ch);
-
+			
 			return $captcha_id;
 		}
 		
