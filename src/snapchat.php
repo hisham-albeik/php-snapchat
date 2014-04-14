@@ -207,14 +207,14 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
-	 * Gets the Captcha associated to the username from snapchat's server
+	 * Gets the captcha associated to the username from snapchat's server
 	 *
 	 * @param string $username
 	 *	The username to get the Captcha puzzle, or in this case an email.
 	 *
 	 *
 	 * @return string
-	 * 	a string which is the captcha_id.
+	 * 	A string which is the captcha_id.
 	 *
 	 */
 	public function getCaptcha($username) {
@@ -228,8 +228,7 @@ class Snapchat extends SnapchatAgent {
 				),
 				array(
 					$this->auth_token,
-					$timestamp,
-					$username . "~",
+					$timestamp
 				)
 			);
 		return $result;
@@ -237,7 +236,7 @@ class Snapchat extends SnapchatAgent {
 
 
 	/**
-	 * Sends the Captcha Solution to snapchat's server.	 
+	 * Sends the captcha solution to snapchat's server.	 
 	 *
 	 * @param $username
 	 *	The username to send the solution.
@@ -247,7 +246,7 @@ class Snapchat extends SnapchatAgent {
 	 *
 	 *
 	 * @return mixed
-	 *   The data returned by the service
+	 *   Data returned by the service.
 	 *
 	 */
 	public function sendCaptcha($username, $captcha_id, $captcha_solution) {
