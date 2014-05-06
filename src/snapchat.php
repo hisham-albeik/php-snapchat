@@ -157,27 +157,26 @@ class Snapchat extends SnapchatAgent {
 	 * @todo
 	 *   Add better validation.
 	 *
-	 * @param string $username
-	 *   The desired username.
-	 * @param string $password
-	 *   The password to associate with the account.
 	 * @param string $email
 	 *   The email address to associate with the account.
+	 * @param string $password
+	 *   The password to associate with the account.
 	 * @param $birthday string
 	 *   The user's birthday (yyyy-mm-dd).
 	 *
 	 * @return mixed
-	 *   The data returned by the service or FALSE if registration failed.
-	 *   Generally, returns the same result as calling self::getUpdates().
+	 *   The data returned is TRUE if the registration succeeded or
+	 *	 FALSE if the registration failed. Generally, returns the 
+	 *	 same result as calling self::getUpdates().
 	 */
-	public function register($username, $password, $email, $birthday) {
+	public function register($email, $password, $birthday) {
 		$timestamp = parent::timestamp();
 		$result = parent::post(
 			'/register',
 			array(
-				'birthday' => $birthday,
-				'password' => $password,
 				'email' => $email,
+				'password' => $password,
+				'birthday' => $birthday,
 				'timestamp' => $timestamp,
 			),
 			array(
@@ -193,7 +192,6 @@ class Snapchat extends SnapchatAgent {
 		// If registration is successful, set the username and auth_token.
 		if (isset($result->logged) && $result->logged) {
 			$this->auth_token = $result->auth_token;
-			$this->$username = $result->email;
 
 			$this->cache = new SnapchatCache();
 			$this->cache->set('updates', $result);
@@ -207,16 +205,46 @@ class Snapchat extends SnapchatAgent {
 	}
 
 	/**
-	 * Gets the captcha associated to the username from snapchat's server
+	 * Registers a username.
+	 *
+	 * @param string $email
+	 *   The email address to associate with the account.
+	 * @param string $username
+	 *   The desired username for this account.
+	 *
+	 * @return mixed
+	 *   The data returned is json data on successful registration
+	 *	 but verification is needed.
+	 */
+	public function register_username($email, $username) {
+		$timestamp = parent::timestamp();
+		$result = parent::post(
+			'/register_username',
+			array(
+				'username' => $email,
+				'selected_username' => $username,
+				'timestamp' => $timestamp
+			),
+			array(
+				$this->auth_token,
+				$timestamp,
+			)
+		);
+
+		return $result;
+	}
+
+	/**
+	 * Gets the captcha associated to the username from snapchat's server.
 	 *
 	 * @param string $username
-	 *	The username to get the Captcha puzzle, or in this case an email.
+	 *	The username to get the captcha puzzle, or in this case an email.
 	 *
 	 * @param bool $download
-	 *	Download the captcha files from snapchat. (optional)
+	 *	Download the captcha archive from snapchat. (optional)
 	 *
 	 * @return string
-	 * 	A string which is the captcha_id.
+	 * 	A string which is the captcha_id. FALSE on failure.
 	 *
 	 */
 	public function getCaptcha($username, $download = NULL) {
@@ -225,8 +253,8 @@ class Snapchat extends SnapchatAgent {
 				$result = parent::post(
 				'/get_captcha',
 				array(
-					'timestamp' => $timestamp,
 					'username' => $username,
+					'timestamp' => $timestamp,
 					'dl' => $download
 				),
 				array(
@@ -239,30 +267,33 @@ class Snapchat extends SnapchatAgent {
 
 
 	/**
-	 * Sends the captcha solution to snapchat's server.	 
-	 *
-	 * @param $username
-	 *	The username to send the solution.
+	 * Sends the captcha solution to snapchat's server.	
 	 *
 	 * @param $captcha_solution
-	 *	The binary solution of the captcha. must be 9 chars long.
+	 *	The binary solution of the captcha. must be 8 chars long. 
+	 *
+	 * @param $captcha_id
+	 *	The 
+	 *
+	 * @param $username
+	 *	The username to be verified.
 	 *
 	 *
 	 * @return mixed
 	 *   Data returned by the service.
 	 *
 	 */
-	public function sendCaptcha($username, $captcha_id, $captcha_solution) {
+	public function sendCaptcha($captcha_solution, $captcha_id, $username) {
 
 				$timestamp = parent::timestamp();
 
 				$result = parent::post(
 				'/solve_captcha',
 				array(
-					'captcha_id' =>  $captcha_id,
 					'captcha_solution' => $captcha_solution,
-					'timestamp' => $timestamp,
+					'captcha_id' =>  $captcha_id,
 					'username' => $username,
+				 	'timestamp' => $timestamp,
 				),
 				array(
 					$this->auth_token,

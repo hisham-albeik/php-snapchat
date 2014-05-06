@@ -123,19 +123,41 @@ Example:
 
 include 'src/snapchat.php';
 
-$email = "email@gmail.com";
+// dummy variables.
+
+$email = "spevanegiel@gmail.com";
+$password = "snapchat1001";
+$birthday = "1963-05-04";
+$username = "spevenspatula01";
 
 $s = new Snapchat();
 
-$s->register("username","password", $email, "1972-04-13");
+// register normally..
 
-$captcha_id = $s->getCaptcha($email);
+$s->register($email,$password,$birthday);
+
+// register your desired username..
+
+$s->register_username($email, $username);
+
+// verify yourself...
+
+$captcha_id = $s->getCaptcha($username, true);
+
+// ask the user for the captcha, 
+// (should be replaced with respected ghost images)...
+//
+// returns false if unable to retrive captcha_id.
+
+var_dump($captcha_id);
 
 echo "captcha?";
 
-$solution = fgets(STDIN); // Solution is in binary.
+$solution = fgets(STDIN); // solution is 8 characters in binary. eg. 001010011
 
-$s->sendCaptcha($username, $captcha_id, $solution);
+// send off captcha.
+
+$s->sendCaptcha($solution, $captcha_id, $username);
 
 ?>
 ```
@@ -152,3 +174,4 @@ License
 ------------
 
 MIT
+101111000
