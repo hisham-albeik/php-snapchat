@@ -106,7 +106,7 @@ $snapchat->logout();
 ?>
 ```
 
-##Snaptcha
+##Snaptcha (ALPHA)
 
 This includes the unfinished "Snaptcha" implementation including two new methods,
 
@@ -114,7 +114,7 @@ getCaptcha()
 
 and
 
-sendCaptcha()
+sendCaptcha() (ALPHA)
 
 Example:
 
