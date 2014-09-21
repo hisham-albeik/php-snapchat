@@ -246,6 +246,8 @@ abstract class SnapchatAgent {
 
 		$ch = curl_init();
 
+		curl_setopt($ch, CURLOPT_PROXY, "http://localhost:8888");
+
 		$data['req_token'] = self::hash($params[0], $params[1]);
 
 		$data['version'] = self::VERSION;
@@ -269,8 +271,8 @@ abstract class SnapchatAgent {
 		);
 
 		curl_setopt($ch, CURLOPT_VERBOSE, true);
-		file_put_contents("headers.txt", " ");
-		curl_setopt($ch, CURLOPT_STDERR, fopen(dirname(__DIR__) . "/headers.txt", "r+"));
+		file_put_contents(".headers.txt", " ");
+		curl_setopt($ch, CURLOPT_STDERR, fopen(dirname(__DIR__) . "/.headers.txt", "r+"));
 		}
 
 		else {
@@ -290,25 +292,16 @@ abstract class SnapchatAgent {
 		// upon registration, the captcha sends us a header to download.
 		if (curl_getinfo($ch, CURLINFO_CONTENT_TYPE) == "application/zip; charset=UTF-8")
 		{
-			$filename = fopen(dirname(__DIR__) . "/headers.txt", "r+");
-
+			$filename = fopen(dirname(__DIR__) . "/.headers.txt", "r+");
 			$stream = stream_get_contents($filename);
-
 			$file = preg_match("/(=)(\S+).zip/", $stream, $match);
-			
 			$group_matched = $match[2] . ".zip";
-
 			$captcha_id = str_replace(".zip", "", $group_matched);
-			
 			if($download == 1)	{
-				
 				file_put_contents($group_matched, $result);
 			}
-			
-			unlink("headers.txt");
-			
+			unlink(".headers.txt");
 			curl_close($ch);
-			
 			return $captcha_id;
 		}
 		

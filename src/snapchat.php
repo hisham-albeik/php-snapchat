@@ -52,6 +52,7 @@ class Snapchat extends SnapchatAgent {
 	const PRIVACY_EVERYONE = 0;
 	const PRIVACY_FRIENDS = 1;
 
+
 	/**
 	 * Sets up some initial variables. If a username and password are passed in,
 	 * we attempt to log in. If a username and auth token are passed in, we'll
@@ -213,8 +214,13 @@ class Snapchat extends SnapchatAgent {
 	 *   The desired username for this account.
 	 *
 	 * @return mixed
-	 *   The data returned is json data on successful registration
-	 *	 but verification is needed.
+	 *   TRUE is returned if the username is accepted.
+	 *	 status integer is returned if the username is either of the following:
+	 *
+	 *	 69 - too short
+	 *	 70 - too long
+	 *	 71 - bad username
+	 *	 72 - taken
 	 */
 	public function register_username($email, $username) {
 		$timestamp = parent::timestamp();
@@ -231,7 +237,13 @@ class Snapchat extends SnapchatAgent {
 			)
 		);
 
-		return $result;
+		if(!property_exists($result, "status"))
+		{
+			return TRUE;
+		}
+		else if($result->status == 69 || 70 || 71 || 72) {
+			return $result->status;
+		}
 	}
 
 	/**
@@ -248,7 +260,6 @@ class Snapchat extends SnapchatAgent {
 	 *
 	 */
 	public function getCaptcha($username, $download = NULL) {
-
 				$timestamp = parent::timestamp();
 				$result = parent::post(
 				'/get_captcha',
@@ -273,20 +284,17 @@ class Snapchat extends SnapchatAgent {
 	 *	The binary solution of the captcha. must be 8 chars long. 
 	 *
 	 * @param $captcha_id
-	 *	The 
+	 *	The ID of the captcha thats being solved.
 	 *
 	 * @param $username
 	 *	The username to be verified.
 	 *
-	 *
 	 * @return mixed
-	 *   Data returned by the service.
+	 *  returns TRUE if captcha is solved, FALSE otherwise.
 	 *
 	 */
 	public function sendCaptcha($captcha_solution, $captcha_id, $username) {
-
 				$timestamp = parent::timestamp();
-
 				$result = parent::post(
 				'/solve_captcha',
 				array(
@@ -301,6 +309,14 @@ class Snapchat extends SnapchatAgent {
 					
 				)
 			);
+        unlink(".headers.txt");
+       if(is_null($result)) {
+           return TRUE;
+       }
+       else if($result == FALSE) {
+           return FALSE;
+        }
+
 	}
 
 	/**

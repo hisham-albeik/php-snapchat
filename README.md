@@ -121,43 +121,66 @@ Example:
 ```php
 <?php
 
+/*
+Snaptcha Bypass sample
+hako 2014
+*/
+
 include 'src/snapchat.php';
 
 // dummy variables.
-
-$email = "spevanegiel@gmail.com";
-$password = "snapchat1001";
-$birthday = "1963-05-04";
-$username = "spevenspatula01";
+$email = "snaptchabypassexample@gmail.com";
+$password = "snaptchabypassexamplepass";
+$birthday = "1933-05-13";
+$username = "snaptchauser";
 
 $s = new Snapchat();
+$s->register($email,$password,$birthday); // Register an account...
+$registration = $s->register_username($email, $username); // Register desired username...
 
-// register normally..
+// registration check...
+if(is_int($registration)) {
 
-$s->register($email,$password,$birthday);
+	if ($registration == 69) {
+		print "username is too short!\n";
+		exit();
+	}
 
-// register your desired username..
+	else if ($registration == 70) {
+		print "username is too long!\n";
+		exit();
+	}
 
-$s->register_username($email, $username);
+	else if ($registration == 71) {
+		print "bad username\n";
+		exit();
+	}
 
-// verify yourself...
+	else if ($registration == 72) {
+		print "username is taken!\n";
+		exit();
+	}
+}
 
-$captcha_id = $s->getCaptcha($username, true);
+$captcha_id = $s->getCaptcha($username, true);	// verify yourself...
 
-// ask the user for the captcha, 
-// (should be replaced with respected ghost images)...
-//
-// returns false if unable to retrive captcha_id.
+//   Ask the user for the captcha,
+//  (should be replaced with respected ghost images)...
+//  returns false if unable to get the captcha_id.
 
-var_dump($captcha_id);
+print $captcha_id . "\n";
+echo "captcha: ";
+$solution_raw = fgets(STDIN); // Solution is 9 characters long eg. 001010011
+$solution = str_replace("\n", "", $solution_raw); // strip off invisible characters.
+$verify = $s->sendCaptcha($solution, $captcha_id, $username); // Send off Snaptcha.
 
-echo "captcha?";
-
-$solution = fgets(STDIN); // solution is 8 characters in binary. eg. 001010011
-
-// send off captcha.
-
-$s->sendCaptcha($solution, $captcha_id, $username);
+// Check if Snaptcha is correct...
+if($verify == TRUE) {
+    print "Snaptcha passed, Snapchat account verified.";
+}
+else if($verify == FALSE) {
+    print "Incorrect Snaptcha, Snapchat account not verified.";
+}
 
 ?>
 ```
