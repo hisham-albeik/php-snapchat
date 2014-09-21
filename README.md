@@ -106,15 +106,16 @@ $snapchat->logout();
 ?>
 ```
 
-##Snaptcha (ALPHA)
+##Snaptcha
 
-This includes the unfinished "Snaptcha" implementation including two new methods,
+Below is an example on how to bypass the "Snaptcha" made by Snapchat.
+This fork includes two new methods.
 
 getCaptcha()
 
 and
 
-sendCaptcha() (ALPHA)
+sendCaptcha()
 
 Example:
 
