@@ -246,8 +246,6 @@ abstract class SnapchatAgent {
 
 		$ch = curl_init();
 
-		curl_setopt($ch, CURLOPT_PROXY, "http://localhost:8888");
-
 		$data['req_token'] = self::hash($params[0], $params[1]);
 
 		$data['version'] = self::VERSION;
