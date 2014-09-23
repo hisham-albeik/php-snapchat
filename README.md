@@ -117,6 +117,8 @@ and
 
 sendCaptcha()
 
+[The new endpoints are discussed in more detail here](http://www.hakobaito.co.uk/b/bypassing-snaptcha)
+
 Example:
 
 ```php
